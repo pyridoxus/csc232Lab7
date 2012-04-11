@@ -52,6 +52,14 @@ int main( int argc, char *argv[] )
 
 void myInit()
 {
+	ctrlAmbient = 0.1;
+	ctrlDiffuse = 1.0;
+	ctrlSpecular = 1.0;
+	ctrlShiny = 20.0;
+	ctrlSpecularRed = 1.0;
+	ctrlSpecularGreen = 1.0;
+	ctrlSpecularBlue = 1.0;
+
 	glMatrixMode( GL_PROJECTION );
 	glLoadIdentity();
 	gluPerspective( 10.0, 800.0 / 600.0, 0.01, 10000.0 );
@@ -97,10 +105,12 @@ void myDraw()
 //  glVertex3f(  0.5,  0.5, 0.0 );
 //  glVertex3f( -0.5,  0.5, 0.0 );
 //  glEnd();
-	GLfloat diffuse[] = { 0.0, 0.0, 0.6, 1.0 };
-	GLfloat specular[] = { 0.4, 0.4, 0.70, 1.0 };
-	GLfloat shininess[] = { 20.0, 0.0, 0.0, 0.0 };
-	GLfloat ambient[] = { 0.1, 0.1, 0.1, 0.0 };
+	GLfloat diffuse[] = { ctrlDiffuse, ctrlDiffuse, ctrlDiffuse, 1.0 };
+	GLfloat specular[] = { 	ctrlSpecular * ctrlSpecularRed,
+													ctrlSpecular * ctrlSpecularGreen,
+													ctrlSpecular * ctrlSpecularBlue, 1.0 };
+	GLfloat shininess[] = { ctrlShiny, 0.0, 0.0, 0.0 };
+	GLfloat ambient[] = { ctrlAmbient, ctrlAmbient, ctrlAmbient, 0.0 };
 
   glPushMatrix();
   glTranslatef( -1.7, 0.0, 0.0);
@@ -124,17 +134,31 @@ void keyboard( unsigned char key, int x, int y )
   // Process keys
   switch (key)
     {
+    case 'A': if(ctrlAmbient < 1.0) ctrlAmbient += 0.02; break;
+    case 'a': if(ctrlAmbient > 0.0) ctrlAmbient -= 0.02; break;
+    case 'D': if(ctrlDiffuse < 1.0) ctrlDiffuse += 0.02; break;
+    case 'd': if(ctrlDiffuse > 0.0) ctrlDiffuse -= 0.02; break;
+    case 'S': if(ctrlSpecular < 1.0) ctrlSpecular += 0.02; break;
+    case 's': if(ctrlSpecular > 0.0) ctrlSpecular -= 0.02; break;
+    case 'N': if(ctrlShiny < 100.0) ctrlShiny += 1.0; break;
+    case 'n': if(ctrlShiny > 0.0) ctrlShiny -= 1.0; break;
+    case 'R': if(ctrlSpecularRed < 1.0) ctrlSpecularRed += 0.02; break;
+    case 'r': if(ctrlSpecularRed > 0.0) ctrlSpecularRed -= 0.02; break;
+    case 'G': if(ctrlSpecularGreen < 1.0) ctrlSpecularGreen += 0.02; break;
+    case 'g': if(ctrlSpecularGreen > 0.0) ctrlSpecularGreen -= 0.02; break;
+    case 'B': if(ctrlSpecularBlue < 1.0) ctrlSpecularBlue += 0.02; break;
+    case 'b': if(ctrlSpecularBlue > 0.0) ctrlSpecularBlue -= 0.02; break;
     case 'q':        // exit
       exit(1);
-      break;
+    break;
     case '+':        // increase red color
       param[0] = param[0]+0.1 > 1.0 ? 1.0 : param[0]+0.1;
       glUniform4fv( paramLocation, 1, param );                // set shader variable
-      break;
+    break;
     case '-':        // decrease red color
       param[0] = param[0]-0.1 < 0.0 ? 0.0 : param[0]-0.1;
       glUniform4fv( paramLocation, 1, param );                // set shader variable
-      break;
+    break;
     }
 
   // Redraw the scene
@@ -149,6 +173,17 @@ void Menu()
   cout << "=================" << endl;
   cout << "+: increase red" << endl;
   cout << "-: decrease red" << endl;
+  cout << "A/a increase/decrease ambient level, Ka" << endl;
+  cout << "D/d increase/decrease diffuse level, Kd" << endl;
+  cout << "S/s increase/decrease specular level, Ks" << endl;
+  cout << "N/n increase/decrease shininess" << endl;
+  cout << "R/r increase/decrease red specular color component" << endl;
+  cout << "G/g increase/decrease green specular color component" << endl;
+  cout << "B/b increase/decrease blue specular color component" << endl;
+  cout << "Left/Right Arrow  Modify light position in -/+ x direction" << endl;
+  cout << "Up/Down Arrow     Modify light position in -/+ y direction" << endl;
+  cout << "Page Up/Down      Modify light position in -/+ z direction" << endl;
+
   cout << "q: exit" << endl;
 }
 

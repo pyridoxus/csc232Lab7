@@ -19,4 +19,11 @@ GLuint shaderProgram1;                          // shader program handle
 float param[4] = { 1.0, 0.0, 0.0, 1.0 };        // parameter to pass to shader
 GLint paramLocation;                            // parameter location
 
+GLfloat ctrlAmbient;					// ambient control
+GLfloat ctrlSpecular;					// specular control
+GLfloat ctrlDiffuse;					// diffuse control
+GLfloat ctrlShiny;						// shiny control
+GLfloat ctrlSpecularRed;			// specular red control
+GLfloat ctrlSpecularGreen;		// specular green control
+GLfloat ctrlSpecularBlue;			// specular blue control
 #endif /* LAB7_H_ */
