@@ -13,6 +13,7 @@
 void Menu();
 void myDraw();
 void keyboard( unsigned char, int, int );
+void myInit(void);
 
 GLuint shaderProgram1;                          // shader program handle
 float param[4] = { 1.0, 0.0, 0.0, 1.0 };        // parameter to pass to shader
