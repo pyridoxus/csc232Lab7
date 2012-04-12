@@ -102,6 +102,14 @@ void setShaderParameters(void)
   // Set information for shader variable
   glUniform4fv( paramLocation[4], 4, ctrlSpecularColor );
 
+  // Address location of shader uniform variable named “specularColor”
+  paramLocation[5] = glGetUniformLocation( shaderProgram1, "lightPos" );
+  if( paramLocation[5] < 0 )    {
+    cerr << "Address location not found" << endl;
+    exit(1);
+  }
+  // Set information for shader variable
+  glUniform4fv( paramLocation[5], 4, lightPos );
 	return;
 }
 
@@ -112,8 +120,8 @@ void myInit()
 	ctrlSpecular = 0.5;
 	ctrlShiny = 20.0;
 	ctrlSpecularColor[0] = 1.0;
-	ctrlSpecularColor[1] = 0.0;
-	ctrlSpecularColor[2] = 0.0;
+	ctrlSpecularColor[1] = 1.0;
+	ctrlSpecularColor[2] = 1.0;
 	ctrlSpecularColor[3] = 1.0;
 
 	glMatrixMode( GL_PROJECTION );
@@ -206,14 +214,62 @@ void keyboard( unsigned char key, int x, int y )
   // Process keys
   switch (key)
     {
-    case 'A': if(ctrlAmbient < 1.0) ctrlAmbient += 0.02; break;
-    case 'a': if(ctrlAmbient > 0.0) ctrlAmbient -= 0.02; break;
-    case 'D': if(ctrlDiffuse < 1.0) ctrlDiffuse += 0.02; break;
-    case 'd': if(ctrlDiffuse > 0.0) ctrlDiffuse -= 0.02; break;
-    case 'S': if(ctrlSpecular < 1.0) ctrlSpecular += 0.02; break;
-    case 's': if(ctrlSpecular > 0.0) ctrlSpecular -= 0.02; break;
-    case 'N': if(ctrlShiny < 100.0) ctrlShiny += 1.0; break;
-    case 'n': if(ctrlShiny > 0.0) ctrlShiny -= 1.0; break;
+    case 'A':
+    	if(ctrlAmbient < 1.0)
+    	{
+    		ctrlAmbient += 0.02;
+    	  glUniform1fv( paramLocation[0], 1, &ctrlAmbient );
+    	}
+    break;
+    case 'a':
+    	if(ctrlAmbient > 0.0)
+    	{
+    		ctrlAmbient -= 0.02;
+    	  glUniform1fv( paramLocation[0], 1, &ctrlAmbient );
+    	}
+    break;
+    case 'D':
+    	if(ctrlDiffuse < 1.0)
+    	{
+    		ctrlDiffuse += 0.02;
+    	  glUniform1fv( paramLocation[2], 1, &ctrlDiffuse );
+    	}
+   	break;
+    case 'd':
+    	if(ctrlDiffuse > 0.0)
+    	{
+    		ctrlDiffuse -= 0.02;
+    	  glUniform1fv( paramLocation[2], 1, &ctrlDiffuse );
+    	}
+   	break;
+    case 'S':
+    	if(ctrlSpecular < 1.0)
+    	{
+    		ctrlSpecular += 0.02;
+    	  glUniform1fv( paramLocation[1], 1, &ctrlSpecular );
+    	}
+   	break;
+    case 's':
+    	if(ctrlSpecular > 0.0)
+    	{
+    		ctrlSpecular -= 0.02;
+    	  glUniform1fv( paramLocation[1], 1, &ctrlSpecular );
+    	}
+   	break;
+    case 'N':
+    	if(ctrlShiny < 100.0)
+    	{
+    		ctrlShiny += 1.0;
+    	  glUniform1fv( paramLocation[3], 1, &ctrlShiny );
+    	}
+   	break;
+    case 'n':
+    	if(ctrlShiny > 0.0)
+    	{
+    		ctrlShiny -= 1.0;
+    	  glUniform1fv( paramLocation[3], 1, &ctrlShiny );
+    	}
+   	break;
     case 'R':
     	if(ctrlSpecularColor[0] < 1.0)
     	{
@@ -227,11 +283,35 @@ void keyboard( unsigned char key, int x, int y )
     		ctrlSpecularColor[0] -= 0.02;
     		glUniform4fv( paramLocation[4], 4, ctrlSpecularColor );
     	}
-    	break;
-    case 'G': if(ctrlSpecularColor[1] < 1.0) ctrlSpecularColor[1] += 0.02; break;
-    case 'g': if(ctrlSpecularColor[1] > 0.0) ctrlSpecularColor[1] -= 0.02; break;
-    case 'B': if(ctrlSpecularColor[2] < 1.0) ctrlSpecularColor[2] += 0.02; break;
-    case 'b': if(ctrlSpecularColor[2] > 0.0) ctrlSpecularColor[2] -= 0.02; break;
+   	break;
+    case 'G':
+    	if(ctrlSpecularColor[1] < 1.0)
+    	{
+    		ctrlSpecularColor[1] += 0.02;
+    		glUniform4fv( paramLocation[4], 4, ctrlSpecularColor );
+    	}
+   	break;
+    case 'g':
+    	if(ctrlSpecularColor[1] > 0.0)
+    	{
+    		ctrlSpecularColor[1] -= 0.02;
+    		glUniform4fv( paramLocation[4], 4, ctrlSpecularColor );
+    	}
+   	break;
+    case 'B':
+    	if(ctrlSpecularColor[2] < 1.0)
+    	{
+    		ctrlSpecularColor[2] += 0.02;
+    		glUniform4fv( paramLocation[4], 4, ctrlSpecularColor );
+    	}
+   	break;
+    case 'b':
+    	if(ctrlSpecularColor[2] > 0.0)
+    	{
+    		ctrlSpecularColor[2] -= 0.02;
+    		glUniform4fv( paramLocation[4], 4, ctrlSpecularColor );
+    	}
+   	break;
     case 'q':        // exit
       exit(1);
     break;
@@ -272,6 +352,8 @@ void specialKeyFunc( int key, int x, int y )
 			lightPos[2] += 0.1;
 		break;
 	}
+  glUseProgram( shaderProgram1 );
+  glUniform4fv( paramLocation[5], 4, lightPos );
 	// Redraw the scene
   glutPostRedisplay();
 	return;

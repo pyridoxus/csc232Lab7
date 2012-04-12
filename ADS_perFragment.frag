@@ -7,6 +7,7 @@ uniform float Kd;
 uniform float Ks;
 uniform float roughness;
 uniform vec4 specularColor;
+uniform vec4 lightPos;
 
 // ADS lighting model function (adapted from Graphics Shaders)
 vec4 ADSLightModel( in vec3 myNormal, in vec4 myPosition, in vec4 myColor )
@@ -15,7 +16,9 @@ vec4 ADSLightModel( in vec3 myNormal, in vec4 myPosition, in vec4 myColor )
        vec4 myLightDiffuse  = vec4(0.5, 0.5, 0.5, 1.0);
        vec4 myLightAmbient  = vec4(0.5, 0.5, 0.5, 1.0);
        vec4 myLightSpecular = vec4(0.5, 0.5, 0.5, 1.0);
-       vec4 myLightPosition = vec4( 0.0, 0.0, 1.0, 1.0 );
+       // vec4 myLightPosition = vec4( 0.0, 0.0, 1.0, 1.0 );
+       // Light position is now input from CPP.
+       vec4 myLightPosition = lightPos;
  
        // gl_Material components
        vec4 myMaterialDiffuse    = myColor * Kd;
