@@ -14,7 +14,7 @@ int main( int argc, char *argv[] )
   // Initialize window system
   glutInit( &argc, argv );
   glutInitDisplayMode( GLUT_SINGLE | GLUT_RGB );
-  glutInitWindowSize( 800, 600 );
+  glutInitWindowSize( 640, 640 );
   glutCreateWindow( "Craig McCulloch's CSC232 Lab 7" );
 
   // Initialize graphics
@@ -126,10 +126,13 @@ void myInit()
 
 	glMatrixMode( GL_PROJECTION );
 	glLoadIdentity();
-	gluPerspective( 10.0, 800.0 / 600.0, 0.01, 10000.0 );
+//  glOrtho( -4.0, 4.0, -4.0, 4.0, -4.0, 4.0 );
+//	glRotatef(180.0, 0.0, 1.0, 0.0);
+	gluPerspective( 30.0, 1.0, 0.01, 10000.0 );
+	glTranslatef( 0, 0, -13);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glTranslatef( 0, 0, -35 );
+//	glTranslatef( 0, 0, 0 );
 	glClearColor( 0.0, 0.0, 0.0, 0.0 );
 	glEnable( GL_DEPTH_TEST );
   glColor3f(1.0, 1.0, 1.0);
@@ -177,6 +180,7 @@ void myDraw()
   glUseProgram( shaderProgram1 );
 
   glPushMatrix();
+  glUseProgram( shaderProgram1 );
   glTranslatef( -1.7, 0.0, 0.0);
   glutSolidTeapot(1.0);
   glPopMatrix();

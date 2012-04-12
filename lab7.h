@@ -26,7 +26,7 @@ GLfloat ctrlSpecular;					// specular control
 GLfloat ctrlDiffuse;					// diffuse control
 GLfloat ctrlShiny;						// shiny control
 GLfloat ctrlSpecularColor[] = { 1.0, 1.0, 1.0, 1.0 };
-float lightPos[4] = {0.0, 1.0, 3.0, 0.0};	// Light position
+float lightPos[4] = {0.0, 1.0, 3.0, 1.0};	// Light position
 GLfloat lightDiffuse[] = { 1.0, 1.0, 1.0, 1.0 };	// Sphere representing light
 GLfloat lightAmbient[] = { 5.0, 5.0, 5.0, 1.0 };	// Sphere representing light
 GLfloat lightSpecular[] = { 0.0, 0.0, 0.0, 0.0 };	// Sphere representing light
