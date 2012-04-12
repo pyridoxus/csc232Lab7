@@ -26,17 +26,9 @@ int main( int argc, char *argv[] )
   }
 
   // Create shader program
-  shaderProgram1 = CreateProgram( "color.vert", "color.frag" );
-
-  // Address location of shader uniform variable named “Color”
-  paramLocation = glGetUniformLocation( shaderProgram1, "Color" );
-  if( paramLocation < 0 )    {
-    cerr << "Address location not found" << endl;
-    exit(1);
-  }
-
-  // Set information for shader variable
-  glUniform4fv( paramLocation, 1, param );
+  shaderProgram1 = CreateProgram( "ADS_perFragment.vert",
+  																"ADS_perFragment.frag" );
+  setShaderParameters();
 
   // Callbacks
   glutDisplayFunc( myDraw );
@@ -48,15 +40,71 @@ int main( int argc, char *argv[] )
   return 0;
 }
 
+void setShaderParameters(void)
+{
+  // Address location of shader uniform variable named “Ambient”
+  paramLocation = glGetUniformLocation( shaderProgram1, "Ka" );
+  if( paramLocation < 0 )    {
+    cerr << "Address location not found" << endl;
+    exit(1);
+  }
+
+  // Set information for shader variable
+  glUniform1fv( paramLocation, 1, &ctrlAmbient );
+
+  // Address location of shader uniform variable named “Specular”
+  paramLocation = glGetUniformLocation( shaderProgram1, "Ks" );
+  if( paramLocation < 0 )    {
+    cerr << "Address location not found" << endl;
+    exit(1);
+  }
+
+  // Set information for shader variable
+  glUniform1fv( paramLocation, 1, &ctrlSpecular );
+
+  // Address location of shader uniform variable named “Diffuse”
+  paramLocation = glGetUniformLocation( shaderProgram1, "Ka" );
+  if( paramLocation < 0 )    {
+    cerr << "Address location not found" << endl;
+    exit(1);
+  }
+
+  // Set information for shader variable
+  glUniform1fv( paramLocation, 1, &ctrlDiffuse );
+
+  // Address location of shader uniform variable named “roughness”
+  paramLocation = glGetUniformLocation( shaderProgram1, "roughness" );
+  if( paramLocation < 0 )    {
+    cerr << "Address location not found" << endl;
+    exit(1);
+  }
+
+  // Set information for shader variable
+  glUniform1fv( paramLocation, 1, &ctrlShiny );
+
+  // Address location of shader uniform variable named “specularColor”
+  paramLocation = glGetUniformLocation( shaderProgram1, "specularColor" );
+  if( paramLocation < 0 )    {
+    cerr << "Address location not found" << endl;
+    exit(1);
+  }
+
+  // Set information for shader variable
+  glUniform4fv( paramLocation, 4, param );
+
+	return;
+}
+
 void myInit()
 {
 	ctrlAmbient = 0.1;
 	ctrlDiffuse = 1.0;
 	ctrlSpecular = 1.0;
 	ctrlShiny = 20.0;
-	ctrlSpecularRed = 1.0;
-	ctrlSpecularGreen = 1.0;
-	ctrlSpecularBlue = 1.0;
+	ctrlSpecularColor[0] = 1.0;
+	ctrlSpecularColor[1] = 1.0;
+	ctrlSpecularColor[2] = 1.0;
+	ctrlSpecularColor[3] = 1.0;
 
 	glMatrixMode( GL_PROJECTION );
 	glLoadIdentity();
@@ -102,10 +150,8 @@ void myDraw()
 	GLfloat specular[] = { 	ctrlSpecular, ctrlSpecular, ctrlSpecular, 1.0 };
 	GLfloat shininess[] = { ctrlShiny, 0.0, 0.0, 0.0 };
 	GLfloat ambient[] = { ctrlAmbient, ctrlAmbient, ctrlAmbient, 0.0 };
-  GLfloat light_diffuse0[] = { ctrlSpecularRed, ctrlSpecularGreen,
-  														ctrlSpecularBlue, 1.0 };
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
-  glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse0);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, ctrlSpecularColor);
 
   // Use shader program
   glUseProgram( shaderProgram1 );
@@ -155,12 +201,12 @@ void keyboard( unsigned char key, int x, int y )
     case 's': if(ctrlSpecular > 0.0) ctrlSpecular -= 0.02; break;
     case 'N': if(ctrlShiny < 100.0) ctrlShiny += 1.0; break;
     case 'n': if(ctrlShiny > 0.0) ctrlShiny -= 1.0; break;
-    case 'R': if(ctrlSpecularRed < 1.0) ctrlSpecularRed += 0.02; break;
-    case 'r': if(ctrlSpecularRed > 0.0) ctrlSpecularRed -= 0.02; break;
-    case 'G': if(ctrlSpecularGreen < 1.0) ctrlSpecularGreen += 0.02; break;
-    case 'g': if(ctrlSpecularGreen > 0.0) ctrlSpecularGreen -= 0.02; break;
-    case 'B': if(ctrlSpecularBlue < 1.0) ctrlSpecularBlue += 0.02; break;
-    case 'b': if(ctrlSpecularBlue > 0.0) ctrlSpecularBlue -= 0.02; break;
+    case 'R': if(ctrlSpecularColor[0] < 1.0) ctrlSpecularColor[0] += 0.02; break;
+    case 'r': if(ctrlSpecularColor[0] > 0.0) ctrlSpecularColor[0] -= 0.02; break;
+    case 'G': if(ctrlSpecularColor[1] < 1.0) ctrlSpecularColor[1] += 0.02; break;
+    case 'g': if(ctrlSpecularColor[1] > 0.0) ctrlSpecularColor[1] -= 0.02; break;
+    case 'B': if(ctrlSpecularColor[2] < 1.0) ctrlSpecularColor[2] += 0.02; break;
+    case 'b': if(ctrlSpecularColor[2] > 0.0) ctrlSpecularColor[2] -= 0.02; break;
     case 'q':        // exit
       exit(1);
     break;
