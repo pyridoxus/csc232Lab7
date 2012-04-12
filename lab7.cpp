@@ -369,8 +369,6 @@ void Menu()
   // Print menu to screen here
   cout << "Keyboard controls" << endl;
   cout << "=================" << endl;
-  cout << "+: increase red" << endl;
-  cout << "-: decrease red" << endl;
   cout << "A/a increase/decrease ambient level, Ka" << endl;
   cout << "D/d increase/decrease diffuse level, Kd" << endl;
   cout << "S/s increase/decrease specular level, Ks" << endl;
