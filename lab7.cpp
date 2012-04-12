@@ -13,7 +13,7 @@ int main( int argc, char *argv[] )
 
   // Initialize window system
   glutInit( &argc, argv );
-  glutInitDisplayMode( GLUT_SINGLE | GLUT_RGBA | GLUT_DEPTH );
+  glutInitDisplayMode( GLUT_SINGLE | GLUT_RGB );
   glutInitWindowSize( 800, 600 );
   glutCreateWindow( "Craig McCulloch's CSC232 Lab 7" );
 
@@ -29,6 +29,19 @@ int main( int argc, char *argv[] )
   shaderProgram1 = CreateProgram( "ADS_perFragment.vert",
   																"ADS_perFragment.frag" );
   setShaderParameters();
+//  shaderProgram1 = CreateProgram( "color.vert",
+//  																"color.frag" );
+//
+//  glUseProgram( shaderProgram1 );
+//  // Address location of shader uniform variable named “Ambient”
+//  paramLocation[0] = glGetUniformLocation( shaderProgram1, "Color" );
+//  if( paramLocation[0] < 0 )    {
+//    cerr << "Address location not found" << endl;
+//    exit(1);
+//  }
+//
+//  // Set information for shader variable
+//  glUniform4fv( paramLocation[0], 4, ctrlSpecularColor );
 
   // Callbacks
   glutDisplayFunc( myDraw );
@@ -42,55 +55,52 @@ int main( int argc, char *argv[] )
 
 void setShaderParameters(void)
 {
+	// Need to make sure we are setting variables in correct shader program
+  glUseProgram( shaderProgram1 );
   // Address location of shader uniform variable named “Ambient”
-  paramLocation = glGetUniformLocation( shaderProgram1, "Ka" );
-  if( paramLocation < 0 )    {
+  paramLocation[0] = glGetUniformLocation( shaderProgram1, "Ka" );
+  if( paramLocation[0] < 0 )    {
     cerr << "Address location not found" << endl;
     exit(1);
   }
-
   // Set information for shader variable
-  glUniform1fv( paramLocation, 1, &ctrlAmbient );
+  glUniform1fv( paramLocation[0], 1, &ctrlAmbient );
 
   // Address location of shader uniform variable named “Specular”
-  paramLocation = glGetUniformLocation( shaderProgram1, "Ks" );
-  if( paramLocation < 0 )    {
+  paramLocation[1] = glGetUniformLocation( shaderProgram1, "Ks" );
+  if( paramLocation[1] < 0 )    {
     cerr << "Address location not found" << endl;
     exit(1);
   }
-
   // Set information for shader variable
-  glUniform1fv( paramLocation, 1, &ctrlSpecular );
+  glUniform1fv( paramLocation[1], 1, &ctrlSpecular );
 
   // Address location of shader uniform variable named “Diffuse”
-  paramLocation = glGetUniformLocation( shaderProgram1, "Ka" );
-  if( paramLocation < 0 )    {
+  paramLocation[2] = glGetUniformLocation( shaderProgram1, "Kd" );
+  if( paramLocation[2] < 0 )    {
     cerr << "Address location not found" << endl;
     exit(1);
   }
-
   // Set information for shader variable
-  glUniform1fv( paramLocation, 1, &ctrlDiffuse );
+  glUniform1fv( paramLocation[2], 1, &ctrlDiffuse );
 
   // Address location of shader uniform variable named “roughness”
-  paramLocation = glGetUniformLocation( shaderProgram1, "roughness" );
-  if( paramLocation < 0 )    {
+  paramLocation[3] = glGetUniformLocation( shaderProgram1, "roughness" );
+  if( paramLocation[3] < 0 )    {
     cerr << "Address location not found" << endl;
     exit(1);
   }
-
   // Set information for shader variable
-  glUniform1fv( paramLocation, 1, &ctrlShiny );
+  glUniform1fv( paramLocation[3], 1, &ctrlShiny );
 
   // Address location of shader uniform variable named “specularColor”
-  paramLocation = glGetUniformLocation( shaderProgram1, "specularColor" );
-  if( paramLocation < 0 )    {
+  paramLocation[4] = glGetUniformLocation( shaderProgram1, "specularColor" );
+  if( paramLocation[4] < 0 )    {
     cerr << "Address location not found" << endl;
     exit(1);
   }
-
   // Set information for shader variable
-  glUniform4fv( paramLocation, 4, param );
+  glUniform4fv( paramLocation[4], 4, ctrlSpecularColor );
 
 	return;
 }
@@ -98,12 +108,12 @@ void setShaderParameters(void)
 void myInit()
 {
 	ctrlAmbient = 0.1;
-	ctrlDiffuse = 1.0;
-	ctrlSpecular = 1.0;
+	ctrlDiffuse = 0.5;
+	ctrlSpecular = 0.5;
 	ctrlShiny = 20.0;
 	ctrlSpecularColor[0] = 1.0;
-	ctrlSpecularColor[1] = 1.0;
-	ctrlSpecularColor[2] = 1.0;
+	ctrlSpecularColor[1] = 0.0;
+	ctrlSpecularColor[2] = 0.0;
 	ctrlSpecularColor[3] = 1.0;
 
 	glMatrixMode( GL_PROJECTION );
@@ -192,6 +202,7 @@ void myDraw()
 // Keyboard callback
 void keyboard( unsigned char key, int x, int y )
 {
+  glUseProgram( shaderProgram1 );
   // Process keys
   switch (key)
     {
@@ -203,8 +214,20 @@ void keyboard( unsigned char key, int x, int y )
     case 's': if(ctrlSpecular > 0.0) ctrlSpecular -= 0.02; break;
     case 'N': if(ctrlShiny < 100.0) ctrlShiny += 1.0; break;
     case 'n': if(ctrlShiny > 0.0) ctrlShiny -= 1.0; break;
-    case 'R': if(ctrlSpecularColor[0] < 1.0) ctrlSpecularColor[0] += 0.02; break;
-    case 'r': if(ctrlSpecularColor[0] > 0.0) ctrlSpecularColor[0] -= 0.02; break;
+    case 'R':
+    	if(ctrlSpecularColor[0] < 1.0)
+    	{
+    		ctrlSpecularColor[0] += 0.02;
+    		glUniform4fv( paramLocation[4], 4, ctrlSpecularColor );
+    	}
+    break;
+    case 'r':
+    	if(ctrlSpecularColor[0] > 0.0)
+    	{
+    		ctrlSpecularColor[0] -= 0.02;
+    		glUniform4fv( paramLocation[4], 4, ctrlSpecularColor );
+    	}
+    	break;
     case 'G': if(ctrlSpecularColor[1] < 1.0) ctrlSpecularColor[1] += 0.02; break;
     case 'g': if(ctrlSpecularColor[1] > 0.0) ctrlSpecularColor[1] -= 0.02; break;
     case 'B': if(ctrlSpecularColor[2] < 1.0) ctrlSpecularColor[2] += 0.02; break;
@@ -212,14 +235,14 @@ void keyboard( unsigned char key, int x, int y )
     case 'q':        // exit
       exit(1);
     break;
-    case '+':        // increase red color
-      param[0] = param[0]+0.1 > 1.0 ? 1.0 : param[0]+0.1;
-      glUniform4fv( paramLocation, 1, param );                // set shader variable
-    break;
-    case '-':        // decrease red color
-      param[0] = param[0]-0.1 < 0.0 ? 0.0 : param[0]-0.1;
-      glUniform4fv( paramLocation, 1, param );                // set shader variable
-    break;
+//    case '+':        // increase red color
+//      param[0] = param[0]+0.1 > 1.0 ? 1.0 : param[0]+0.1;
+//      glUniform4fv( paramLocation, 1, param );                // set shader variable
+//    break;
+//    case '-':        // decrease red color
+//      param[0] = param[0]-0.1 < 0.0 ? 0.0 : param[0]-0.1;
+//      glUniform4fv( paramLocation, 1, param );                // set shader variable
+//    break;
     }
 
   // Redraw the scene
