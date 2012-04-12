@@ -20,30 +20,28 @@ int main( int argc, char *argv[] )
   // Initialize graphics
   myInit();
   // Resolves which OpenGL extensions are supported by hardware
-//  if( glewInit() != GLEW_OK )    {
-//    cerr << "Error reported by glewInit" << endl;
-//    exit(1);
-//  }
-//
-//  // Create shader program
-//  shaderProgram1 = CreateProgram( "color.vert", "color.frag" );
-//
-//  // Use shader program
-//  glUseProgram( shaderProgram1 );
-//
-//  // Address location of shader uniform variable named “Color”
-//  paramLocation = glGetUniformLocation( shaderProgram1, "Color" );
-//  if( paramLocation < 0 )    {
-//    cerr << "Address location not found" << endl;
-//    exit(1);
-//  }
-//
-//  // Set information for shader variable
-//  glUniform4fv( paramLocation, 1, param );
+  if( glewInit() != GLEW_OK )    {
+    cerr << "Error reported by glewInit" << endl;
+    exit(1);
+  }
+
+  // Create shader program
+  shaderProgram1 = CreateProgram( "color.vert", "color.frag" );
+
+  // Address location of shader uniform variable named “Color”
+  paramLocation = glGetUniformLocation( shaderProgram1, "Color" );
+  if( paramLocation < 0 )    {
+    cerr << "Address location not found" << endl;
+    exit(1);
+  }
+
+  // Set information for shader variable
+  glUniform4fv( paramLocation, 1, param );
 
   // Callbacks
   glutDisplayFunc( myDraw );
   glutKeyboardFunc( keyboard );
+	glutSpecialFunc( specialKeyFunc );
 
   // Event loop
   glutMainLoop();
@@ -68,20 +66,17 @@ void myInit()
 	glTranslatef( 0, 0, -35 );
 	glClearColor( 0.0, 0.0, 0.0, 0.0 );
 	glEnable( GL_DEPTH_TEST );
+  glColor3f(1.0, 1.0, 1.0);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
    // Select shading model
 	glShadeModel(GL_SMOOTH);
 	// Define light source
-	GLfloat light_position0[] = { 0.0, 1.0, 1.0, 0.0 };
-	glLightfv(GL_LIGHT0, GL_POSITION, light_position0);
-
-	// Define light source
-	GLfloat light_position1[] = { -1.0, -1.0, 1.0, 1.0 };
-	GLfloat light_specular1[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat light_diffuse1[] = { 1.0, 1.0, 1.0, 1.0 };
-	glLightfv(GL_LIGHT1, GL_POSITION, light_position1);
-	glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse1);
-	glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular1);
+	GLfloat light_specular0[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat light_diffuse0[] = { 1.0, 1.0, 1.0, 1.0 };
+	glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse0);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular0);
 
 	// Enable lighting model
 	glEnable(GL_LIGHTING);
@@ -89,8 +84,6 @@ void myInit()
 	// Enable light 0
 	glEnable(GL_LIGHT0);
 
-	// Enable light 1
-	glEnable(GL_LIGHT1);
 }
 
 void myDraw()
@@ -109,20 +102,39 @@ void myDraw()
 	GLfloat specular[] = { 	ctrlSpecular, ctrlSpecular, ctrlSpecular, 1.0 };
 	GLfloat shininess[] = { ctrlShiny, 0.0, 0.0, 0.0 };
 	GLfloat ambient[] = { ctrlAmbient, ctrlAmbient, ctrlAmbient, 0.0 };
-  GLfloat light_diffuse1[] = { ctrlSpecularRed, ctrlSpecularGreen,
+  GLfloat light_diffuse0[] = { ctrlSpecularRed, ctrlSpecularGreen,
   														ctrlSpecularBlue, 1.0 };
-  glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse1);
+	glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse0);
 
-	glPushMatrix();
+  // Use shader program
+  glUseProgram( shaderProgram1 );
+
+  glPushMatrix();
   glTranslatef( -1.7, 0.0, 0.0);
+  glutSolidTeapot(1.0);
+  glPopMatrix();
+
+  // Use No shader program
+  glUseProgram( 0 );
+
+  // Sphere representing the light
+  glPushMatrix();
+//  glDisable(GL_LIGHT0);
+  glTranslatef( lightPos[0], lightPos[1], lightPos[2]);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, lightDiffuse);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, lightSpecular);
+  glLightModelfv( GL_LIGHT_MODEL_AMBIENT, lightAmbient );
+  glutSolidSphere( 0.25, 10, 10 );
+//  glEnable(GL_LIGHT0);
+  glPopMatrix();
+
+  glPushMatrix();
+  glTranslatef( 1.7, 0.0, 0.0);
   glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
   glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
   glMaterialfv(GL_FRONT, GL_SHININESS, shininess);
   glLightModelfv( GL_LIGHT_MODEL_AMBIENT, ambient );
-  glutSolidTeapot(1.0);
-  glPopMatrix();
-  glPushMatrix();
-  glTranslatef( 1.7, 0.0, 0.0);
   glutSolidTeapot(1.0);
   glPopMatrix();
   // Execute draw commands
@@ -164,6 +176,34 @@ void keyboard( unsigned char key, int x, int y )
 
   // Redraw the scene
   glutPostRedisplay();
+}
+
+void specialKeyFunc( int key, int x, int y )
+{
+	switch(key)
+	{
+		case GLUT_KEY_LEFT:			// translate along -x axis
+			lightPos[0] -= 0.1;
+		break;
+		case GLUT_KEY_RIGHT:		// translate along +x axis
+			lightPos[0] += 0.1;
+		break;
+		case GLUT_KEY_DOWN:			// translate along -y axis
+			lightPos[1] -= 0.1;
+		break;
+		case GLUT_KEY_UP:			  // translate along +y axis
+			lightPos[1] += 0.1;
+		break;
+		case GLUT_KEY_PAGE_UP:  // translate along -z axis
+			lightPos[2] -= 0.1;
+		break;
+		case GLUT_KEY_PAGE_DOWN:// translate along +z axis
+			lightPos[2] += 0.1;
+		break;
+	}
+	// Redraw the scene
+  glutPostRedisplay();
+	return;
 }
 
 // Menu

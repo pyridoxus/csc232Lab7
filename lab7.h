@@ -13,6 +13,7 @@
 void Menu();
 void myDraw();
 void keyboard( unsigned char, int, int );
+void specialKeyFunc( int key, int x, int y );
 void myInit(void);
 
 GLuint shaderProgram1;                          // shader program handle
@@ -26,4 +27,8 @@ GLfloat ctrlShiny;						// shiny control
 GLfloat ctrlSpecularRed;			// specular red control
 GLfloat ctrlSpecularGreen;		// specular green control
 GLfloat ctrlSpecularBlue;			// specular blue control
+float lightPos[4] = {0.0, 1.0, 0.0, 0.0};	// Light position
+GLfloat lightDiffuse[] = { 1.0, 1.0, 1.0, 1.0 };	// Sphere representing light
+GLfloat lightAmbient[] = { 5.0, 5.0, 5.0, 1.0 };	// Sphere representing light
+GLfloat lightSpecular[] = { 0.0, 0.0, 0.0, 0.0 };	// Sphere representing light
 #endif /* LAB7_H_ */
