@@ -147,11 +147,13 @@ void myDraw()
 //  glVertex3f( -0.5,  0.5, 0.0 );
 //  glEnd();
 	GLfloat diffuse[] = { ctrlDiffuse, ctrlDiffuse, ctrlDiffuse, 1.0 };
-	GLfloat specular[] = { 	ctrlSpecular, ctrlSpecular, ctrlSpecular, 1.0 };
+	GLfloat specular[] = { 	ctrlSpecular * ctrlSpecularColor[0],
+													ctrlSpecular * ctrlSpecularColor[1],
+													ctrlSpecular * ctrlSpecularColor[2], 1.0 };
 	GLfloat shininess[] = { ctrlShiny, 0.0, 0.0, 0.0 };
 	GLfloat ambient[] = { ctrlAmbient, ctrlAmbient, ctrlAmbient, 0.0 };
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
-  glLightfv(GL_LIGHT0, GL_DIFFUSE, ctrlSpecularColor);
+//  glLightfv(GL_LIGHT0, GL_DIFFUSE, ctrlSpecularColor);
 
   // Use shader program
   glUseProgram( shaderProgram1 );
