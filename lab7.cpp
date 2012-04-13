@@ -13,7 +13,7 @@ int main( int argc, char *argv[] )
 
   // Initialize window system
   glutInit( &argc, argv );
-  glutInitDisplayMode( GLUT_SINGLE | GLUT_RGB );
+  glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH );
   glutInitWindowSize( 640, 640 );
   glutCreateWindow( "Craig McCulloch's CSC232 Lab 7" );
 
@@ -146,6 +146,8 @@ void myInit()
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse0);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular0);
+  glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
+  glLightModeli( GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR );
 
 	// Enable lighting model
 	glEnable(GL_LIGHTING);
@@ -176,15 +178,6 @@ void myDraw()
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
 //  glLightfv(GL_LIGHT0, GL_DIFFUSE, ctrlSpecularColor);
 
-  // Use shader program
-  glUseProgram( shaderProgram1 );
-
-  glPushMatrix();
-  glUseProgram( shaderProgram1 );
-  glTranslatef( -1.7, 0.0, 0.0);
-  glutSolidTeapot(1.0);
-  glPopMatrix();
-
   // Use No shader program
   glUseProgram( 0 );
 
@@ -199,16 +192,25 @@ void myDraw()
 //  glEnable(GL_LIGHT0);
   glPopMatrix();
 
-  glPushMatrix();
-  glTranslatef( 1.7, 0.0, 0.0);
   glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
   glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
   glMaterialfv(GL_FRONT, GL_SHININESS, shininess);
-  glLightModelfv( GL_LIGHT_MODEL_AMBIENT, ambient );
+  glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
+
+  glPushMatrix();
+  glTranslatef( 1.7, 0.0, 0.0);
   glutSolidTeapot(1.0);
   glPopMatrix();
-  // Execute draw commands
-  glFlush();
+
+  glUseProgram( shaderProgram1 );
+  glPushMatrix();
+  glTranslatef( -1.7, 0.0, 0.0);
+  glutSolidTeapot(1.0);
+  glPopMatrix();
+
+// Execute draw commands
+  glutSwapBuffers();
+//  glFlush();
 }
 
 // Keyboard callback
@@ -222,98 +224,98 @@ void keyboard( unsigned char key, int x, int y )
     	if(ctrlAmbient < 1.0)
     	{
     		ctrlAmbient += 0.02;
-    	  glUniform1fv( paramLocation[0], 1, &ctrlAmbient );
+    	  glUniform1f( paramLocation[0], ctrlAmbient );
     	}
     break;
     case 'a':
     	if(ctrlAmbient > 0.0)
     	{
     		ctrlAmbient -= 0.02;
-    	  glUniform1fv( paramLocation[0], 1, &ctrlAmbient );
+    	  glUniform1f( paramLocation[0], ctrlAmbient );
     	}
     break;
     case 'D':
     	if(ctrlDiffuse < 1.0)
     	{
     		ctrlDiffuse += 0.02;
-    	  glUniform1fv( paramLocation[2], 1, &ctrlDiffuse );
+    	  glUniform1f( paramLocation[2], ctrlDiffuse );
     	}
    	break;
     case 'd':
     	if(ctrlDiffuse > 0.0)
     	{
     		ctrlDiffuse -= 0.02;
-    	  glUniform1fv( paramLocation[2], 1, &ctrlDiffuse );
+    	  glUniform1f( paramLocation[2], ctrlDiffuse );
     	}
    	break;
     case 'S':
     	if(ctrlSpecular < 1.0)
     	{
     		ctrlSpecular += 0.02;
-    	  glUniform1fv( paramLocation[1], 1, &ctrlSpecular );
+    	  glUniform1f( paramLocation[1], ctrlSpecular );
     	}
    	break;
     case 's':
     	if(ctrlSpecular > 0.0)
     	{
     		ctrlSpecular -= 0.02;
-    	  glUniform1fv( paramLocation[1], 1, &ctrlSpecular );
+    	  glUniform1f( paramLocation[1], ctrlSpecular );
     	}
    	break;
     case 'N':
     	if(ctrlShiny < 100.0)
     	{
     		ctrlShiny += 1.0;
-    	  glUniform1fv( paramLocation[3], 1, &ctrlShiny );
+    	  glUniform1f( paramLocation[3], ctrlShiny );
     	}
    	break;
     case 'n':
     	if(ctrlShiny > 0.0)
     	{
     		ctrlShiny -= 1.0;
-    	  glUniform1fv( paramLocation[3], 1, &ctrlShiny );
+    	  glUniform1f( paramLocation[3], ctrlShiny );
     	}
    	break;
     case 'R':
     	if(ctrlSpecularColor[0] < 1.0)
     	{
     		ctrlSpecularColor[0] += 0.02;
-    		glUniform4fv( paramLocation[4], 4, ctrlSpecularColor );
+    		glUniform4fv( paramLocation[4], 1, ctrlSpecularColor );
     	}
     break;
     case 'r':
     	if(ctrlSpecularColor[0] > 0.0)
     	{
     		ctrlSpecularColor[0] -= 0.02;
-    		glUniform4fv( paramLocation[4], 4, ctrlSpecularColor );
+    		glUniform4fv( paramLocation[4], 1, ctrlSpecularColor );
     	}
    	break;
     case 'G':
     	if(ctrlSpecularColor[1] < 1.0)
     	{
     		ctrlSpecularColor[1] += 0.02;
-    		glUniform4fv( paramLocation[4], 4, ctrlSpecularColor );
+    		glUniform4fv( paramLocation[4], 1, ctrlSpecularColor );
     	}
    	break;
     case 'g':
     	if(ctrlSpecularColor[1] > 0.0)
     	{
     		ctrlSpecularColor[1] -= 0.02;
-    		glUniform4fv( paramLocation[4], 4, ctrlSpecularColor );
+    		glUniform4fv( paramLocation[4], 1, ctrlSpecularColor );
     	}
    	break;
     case 'B':
     	if(ctrlSpecularColor[2] < 1.0)
     	{
     		ctrlSpecularColor[2] += 0.02;
-    		glUniform4fv( paramLocation[4], 4, ctrlSpecularColor );
+    		glUniform4fv( paramLocation[4], 1, ctrlSpecularColor );
     	}
    	break;
     case 'b':
     	if(ctrlSpecularColor[2] > 0.0)
     	{
     		ctrlSpecularColor[2] -= 0.02;
-    		glUniform4fv( paramLocation[4], 4, ctrlSpecularColor );
+    		glUniform4fv( paramLocation[4], 1, ctrlSpecularColor );
     	}
    	break;
     case 'q':        // exit
