@@ -103,14 +103,6 @@ void setShaderParameters(void)
   // Set information for shader variable
   glUniform4fv( paramLocation[4], 4, ctrlSpecularColor );
 
-  // Address location of shader uniform variable named “specularColor”
-  paramLocation[5] = glGetUniformLocation( shaderProgram1, "lightPos" );
-  if( paramLocation[5] < 0 )    {
-    cerr << "Address location not found" << endl;
-    exit(1);
-  }
-  // Set information for shader variable
-  glUniform4fv( paramLocation[5], 4, lightPos );
 	return;
 }
 
