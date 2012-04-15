@@ -14,7 +14,8 @@ int main( int argc, char *argv[] )
   // Initialize window system
   glutInit( &argc, argv );
   glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH );
-  glutInitWindowSize( 640, 640 );
+  glutInitWindowSize( 520, 390 );
+//  glutInitWindowSize( 640, 640 );
   glutCreateWindow( "Craig McCulloch's CSC232 Lab 7" );
 
   // Initialize graphics
@@ -64,7 +65,7 @@ void setShaderParameters(void)
     exit(1);
   }
   // Set information for shader variable
-  glUniform1fv( paramLocation[0], 1, &ctrlAmbient );
+  glUniform1f( paramLocation[0], ctrlAmbient );
 
   // Address location of shader uniform variable named “Specular”
   paramLocation[1] = glGetUniformLocation( shaderProgram1, "Ks" );
@@ -73,7 +74,7 @@ void setShaderParameters(void)
     exit(1);
   }
   // Set information for shader variable
-  glUniform1fv( paramLocation[1], 1, &ctrlSpecular );
+  glUniform1f( paramLocation[1], ctrlSpecular );
 
   // Address location of shader uniform variable named “Diffuse”
   paramLocation[2] = glGetUniformLocation( shaderProgram1, "Kd" );
@@ -82,7 +83,7 @@ void setShaderParameters(void)
     exit(1);
   }
   // Set information for shader variable
-  glUniform1fv( paramLocation[2], 1, &ctrlDiffuse );
+  glUniform1f( paramLocation[2], ctrlDiffuse );
 
   // Address location of shader uniform variable named “roughness”
   paramLocation[3] = glGetUniformLocation( shaderProgram1, "roughness" );
@@ -91,7 +92,7 @@ void setShaderParameters(void)
     exit(1);
   }
   // Set information for shader variable
-  glUniform1fv( paramLocation[3], 1, &ctrlShiny );
+  glUniform1f( paramLocation[3], ctrlShiny );
 
   // Address location of shader uniform variable named “specularColor”
   paramLocation[4] = glGetUniformLocation( shaderProgram1, "specularColor" );
@@ -128,11 +129,11 @@ void myInit()
 	glLoadIdentity();
 //  glOrtho( -4.0, 4.0, -4.0, 4.0, -4.0, 4.0 );
 //	glRotatef(180.0, 0.0, 1.0, 0.0);
-	gluPerspective( 30.0, 1.0, 0.01, 10000.0 );
-	glTranslatef( 0, 0, -13);
+//	gluPerspective( 30.0, 1.0, 0.01, 10000.0 );
+  gluPerspective( 20.0, 1.33, 0.01, 10000.0 );
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-//	glTranslatef( 0, 0, 0 );
+	glTranslatef( 0, 0, -7 );
 	glClearColor( 0.0, 0.0, 0.0, 0.0 );
 	glEnable( GL_DEPTH_TEST );
   glColor3f(1.0, 1.0, 1.0);
@@ -183,13 +184,13 @@ void myDraw()
 
   // Sphere representing the light
   glPushMatrix();
-//  glDisable(GL_LIGHT0);
+  glDisable(GL_LIGHTING);
   glTranslatef( lightPos[0], lightPos[1], lightPos[2]);
   glMaterialfv(GL_FRONT, GL_DIFFUSE, lightDiffuse);
   glMaterialfv(GL_FRONT, GL_SPECULAR, lightSpecular);
   glLightModelfv( GL_LIGHT_MODEL_AMBIENT, lightAmbient );
   glutSolidSphere( 0.25, 10, 10 );
-//  glEnable(GL_LIGHT0);
+  glEnable(GL_LIGHTING);
   glPopMatrix();
 
   glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
@@ -198,14 +199,19 @@ void myDraw()
   glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
 
   glPushMatrix();
-  glTranslatef( 1.7, 0.0, 0.0);
-  glutSolidTeapot(1.0);
+  glTranslatef( 0.75, 0.0, 0.0 );
+  glutSolidTeapot( 0.5 );
   glPopMatrix();
 
   glUseProgram( shaderProgram1 );
+  glUniform1f( paramLocation[0], ctrlAmbient );
+  glUniform1f( paramLocation[1], ctrlSpecular );
+  glUniform1f( paramLocation[2], ctrlDiffuse );
+  glUniform1f( paramLocation[3], ctrlShiny );
+  glUniform4fv( paramLocation[4], 1, ctrlSpecularColor );
   glPushMatrix();
-  glTranslatef( -1.7, 0.0, 0.0);
-  glutSolidTeapot(1.0);
+  glTranslatef( -0.75, 0.0, 0.0 );
+  glutSolidTeapot( 0.5 );
   glPopMatrix();
 
 // Execute draw commands
